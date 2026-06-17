@@ -1,0 +1,51 @@
+.row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.cell {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 10px 6px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.cell.today {
+  background: var(--text);
+  color: #fff;
+}
+
+.name {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.today .name { color: rgba(255, 255, 255, 0.6); }
+
+.num {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.dots {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}

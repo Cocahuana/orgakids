@@ -1,0 +1,76 @@
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid transparent;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+  transition: transform 0.12s;
+}
+.card:hover { transform: translateX(2px); }
+
+.card--exam    { border-left-color: var(--exam);    background: var(--exam-bg); }
+.card--sport   { border-left-color: var(--sport);   background: var(--sport-bg); }
+.card--event   { border-left-color: var(--event);   background: var(--event-bg); }
+.card--recover { border-left-color: var(--recover); background: var(--recover-bg); }
+.card--work    { border-left-color: var(--work);    background: var(--work-bg); }
+
+.icon {
+  font-size: 24px;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  padding-right: 4px;
+}
+
+.title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 3px;
+}
+
+.meta {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.meta span { display: flex; align-items: center; gap: 4px; }
+
+.notes {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 28px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 620px) {
+  .card { flex-wrap: wrap; }
+  .body { min-width: calc(100% - 52px); }
+  .actions {
+    width: 100%;
+    margin-top: 4px;
+    margin-left: 38px;
+    flex-direction: row;
+  }
+}

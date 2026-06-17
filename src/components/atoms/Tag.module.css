@@ -1,0 +1,15 @@
+.tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-top: 6px;
+}
+
+.tag--exam    { background: var(--exam-border);    color: var(--exam); }
+.tag--sport   { background: var(--sport-border);   color: #0e8a55; }
+.tag--event   { background: var(--event-border);   color: var(--event); }
+.tag--recover { background: var(--recover-border); color: #cc7a00; }
+.tag--work    { background: var(--work-border);    color: #0077b3; }

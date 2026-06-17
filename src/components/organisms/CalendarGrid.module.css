@@ -1,0 +1,205 @@
+.shell {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.monthTitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.navBtn {
+  width: 44px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.navBtn:hover { background: var(--border); }
+
+.todayBtn {
+  display: block;
+  margin: -4px auto 14px;
+  border: 1px solid #C7D2FF;
+  border-radius: 20px;
+  background: #F5F7FF;
+  color: #4059B5;
+  padding: 6px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.weekdays { margin-bottom: 6px; }
+
+.weekday {
+  text-align: center;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.day {
+  border: 1.5px solid transparent;
+  border-radius: 11px;
+  background: var(--bg);
+  min-height: 76px;
+  padding: 7px 5px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+  touch-action: manipulation;
+  display: flex;
+  flex-direction: column;
+}
+.day:hover { border-color: #C7D2FF; }
+.outside   { opacity: 0.42; }
+.isToday   { border-color: #7C9FFF; }
+.selected  { background: var(--text); color: #fff; border-color: var(--text); }
+
+.dayNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+}
+.isToday .dayNumber  { background: #7C9FFF; color: #fff; }
+.selected .dayNumber { background: rgba(255,255,255,0.18); color: #fff; }
+
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+  min-height: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+  display: inline-block;
+}
+
+.count {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--muted);
+}
+.selected .count { color: rgba(255,255,255,0.7); }
+
+/* Legend */
+.sectionTitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dot2 {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.addDayBtn {
+  border: none;
+  border-radius: 9px;
+  background: #7C9FFF;
+  color: #fff;
+  padding: 8px 11px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .shell { padding: 10px; }
+  .grid, .weekdays { gap: 3px; }
+  .day { min-height: 62px; padding: 5px 3px; border-radius: 8px; }
+  .dayNumber { min-width: 22px; height: 22px; font-size: 12px; }
+  .dots { gap: 3px; margin-top: 7px; }
+  .dot { width: 7px; height: 7px; }
+  .count { display: none; }
+  .monthTitle { font-size: 17px; }
+  .detailHeader { align-items: flex-start; }
+}

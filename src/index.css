@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #F0F4FF;
+  --surface: #FFFFFF;
+  --border: #E2E8FF;
+  --text: #1A1F3A;
+  --muted: #6B7399;
+
+  --exam:           #FF5C5C;
+  --exam-bg:        #FFF0F0;
+  --exam-border:    #FFCECE;
+
+  --sport:          #2DB87C;
+  --sport-bg:       #EDFAF4;
+  --sport-border:   #B5EDD6;
+
+  --event:          #7C5CFC;
+  --event-bg:       #F3EFFF;
+  --event-border:   #CEBFFF;
+
+  --recover:        #FF9A00;
+  --recover-bg:     #FFF7E6;
+  --recover-border: #FFDFAA;
+
+  --work:           #0099E6;
+  --work-bg:        #E6F6FF;
+  --work-border:    #AADFF7;
+
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(30, 40, 100, 0.07);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { min-height: 100vh; }
+
+input, select, textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: #7C9FFF; }
+
+textarea { resize: vertical; min-height: 70px; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+

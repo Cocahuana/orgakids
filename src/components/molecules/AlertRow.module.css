@@ -1,0 +1,20 @@
+.row {
+  background: #FFF5E6;
+  border: 1.5px solid #FFDFAA;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.icon { font-size: 20px; }
+
+.label {
+  margin-left: auto;
+  font-weight: 800;
+  color: #cc7a00;
+}

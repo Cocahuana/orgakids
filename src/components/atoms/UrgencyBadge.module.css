@@ -1,0 +1,15 @@
+.urgency {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.urgency--red    { background: #FF5C5C; color: #fff; }
+.urgency--yellow { background: #FFD000; color: #5A4000; }
+.urgency--green  { background: #2DB87C; color: #fff; }

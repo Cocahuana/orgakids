@@ -1,0 +1,35 @@
+.btn {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.8);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+  min-width: 82px;
+  touch-action: manipulation;
+}
+
+.btn--edit {
+  color: #4059B5;
+  border-color: #C7D2FF;
+  background: #F5F7FF;
+}
+.btn--edit:hover {
+  color: #203B9A;
+  background: #E8EDFF;
+}
+
+.btn--delete {
+  color: #C92C2C;
+  border-color: #FFCECE;
+  background: #FFF5F5;
+}
+.btn--delete:hover {
+  color: #9C1111;
+  background: #FFE1E1;
+}
