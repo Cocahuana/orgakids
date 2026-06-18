@@ -11,22 +11,22 @@ Una vez instalada debe comportarse como una app nativa: pantalla completa, ícon
 
 ## Objetivos del Proyecto
 
-- Tomar el HTML funcional ya existente (UI y lógica completas con `localStorage`) y convertirlo en una PWA instalable.
-- Integrar Firebase (Auth + Firestore + Hosting) **sin reescribir el CSS ni la estructura de UI**.
+- Migrar el HTML/CSS/JS funcional ya existente (UI y lógica completas con `localStorage`) a una app de **React**.
+- Integrar Firebase (Auth + Firestore + Hosting) sobre la nueva base de React.
 - Migrar la persistencia de `localStorage` a Firestore, con sincronización en tiempo real entre dispositivos.
-- Configurar correctamente `manifest.json` y un service worker para soporte offline.
+- Convertir la app de React en una PWA instalable (manifest + service worker).
 - Dejar la app deployada en Firebase Hosting.
 
 ## Punto de partida
 
-Ya existe un HTML base funcional completo, con toda la lógica de UI implementada usando `localStorage`. Este archivo debe usarse como referencia visual y de lógica.
+Ya existe un HTML base funcional completo, con toda la lógica de UI implementada usando `localStorage`. Este archivo se usa como referencia visual y de lógica para migrar a React.
 
-> __IMPORTANTE:__ No reescribir el CSS ni la estructura de UI. El trabajo consiste en integrar Firebase por encima de lo que ya existe.
+> __IMPORTANTE:__ Al migrar a React, mantener el mismo diseño visual (CSS) y la misma lógica de UI ya resuelta en el HTML base. No se trata de rediseñar, sino de reorganizar esa lógica en componentes.
 
 ## Stack Tecnológico
 
-- [ ] **Frontend:** HTML/CSS/JS puro (sin frameworks)
-- [ ] **PWA:** `manifest.json` + Service Worker
+- [ ] **Frontend:** React (Create React App o Vite)
+- [ ] **PWA:** `manifest.json` + Service Worker (vía template PWA de CRA o `vite-plugin-pwa`)
 - [ ] **Auth:** Firebase Authentication (email + contraseña, cuenta familiar única y compartida)
 - [ ] **Base de datos:** Firebase Firestore (reemplaza `localStorage`, sincronización en tiempo real)
 - [ ] **Hosting:** Firebase Hosting
@@ -65,51 +65,60 @@ Cada documento representa una entrada y tiene los siguientes campos:
 
 ## Requerimientos mínimos
 
-### 1. Autenticación (Firebase Auth)
+### 1. Migración a React
+
+- [ ] Inicializar proyecto de React (CRA o Vite)
+- [ ] Pasar el HTML/CSS existente a componentes (manteniendo el diseño visual)
+- [ ] Reorganizar la lógica de UI ya hecha en estado/props de React
+- [ ] Armar el ruteo de las vistas (Resumen, Calendario, una pestaña por tipo de entrada)
+
+### 2. Autenticación (Firebase Auth)
 
 - [ ] Configurar Firebase Authentication con email + contraseña
-- [ ] Pantalla de login
+- [ ] Pantalla/componente de login
 - [ ] Sesión persistente (no pedir login en cada visita)
 - [ ] Una sola cuenta familiar compartida (no es necesario soporte multi-usuario)
 
-### 2. Migración a Firestore
+### 3. Migración a Firestore
 
 - [ ] Crear la colección `entries` en Firestore
-- [ ] Implementar CRUD completo (crear, leer, actualizar, eliminar)
+- [ ] Implementar CRUD completo (crear, leer, actualizar, eliminar) desde componentes/hooks de React
 - [ ] Reemplazar todas las llamadas a `localStorage` por llamadas a Firestore
 
-### 3. Sincronización en tiempo real
+### 4. Sincronización en tiempo real
 
-- [ ] Implementar `onSnapshot` sobre la colección `entries`
+- [ ] Implementar `onSnapshot` sobre la colección `entries` (por ejemplo dentro de un `useEffect`)
 - [ ] Validar que un cambio hecho desde un dispositivo se refleje al instante en los demás
 
-### 4. PWA — Manifest
+### 5. PWA — Manifest
 
-- [ ] Crear `manifest.json` con:
+- [ ] Crear/ajustar `manifest.json` con:
   - [ ] Nombre e ícono de la app
   - [ ] `display: standalone`
   - [ ] Color de tema
 
-### 5. PWA — Service Worker
+### 6. PWA — Service Worker
 
-- [ ] Service worker básico
+- [ ] Service worker básico (registro vía CRA template o `vite-plugin-pwa`)
 - [ ] Cache del shell de la app para funcionamiento offline
 
-### 6. Deploy
+### 7. Deploy
 
 - [ ] Configurar Firebase Hosting
-- [ ] Deploy de la app
+- [ ] Build de producción de la app de React
+- [ ] Deploy en Firebase Hosting
 
 ## Orden sugerido de trabajo
 
-1. Configurar el proyecto en Firebase (Auth + Firestore + Hosting)
-2. Agregar pantalla de login y lógica de autenticación
-3. Migrar el CRUD de `localStorage` a Firestore
-4. Agregar sincronización en tiempo real con `onSnapshot`
-5. Agregar `manifest.json` y service worker
-6. Deploy en Firebase Hosting
+1. Migrar el HTML/CSS/JS base a componentes de React, manteniendo el diseño y la lógica de UI
+2. Configurar el proyecto en Firebase (Auth + Firestore + Hosting)
+3. Agregar pantalla de login y lógica de autenticación
+4. Migrar el CRUD de `localStorage` a Firestore
+5. Agregar sincronización en tiempo real con `onSnapshot`
+6. Convertir la app a PWA (`manifest.json` + service worker)
+7. Deploy en Firebase Hosting
 
 ## Notas
 
-- No reescribir el CSS ni la estructura de UI existente; solo integrar Firebase.
-- El HTML base adjuntado funciona como referencia visual y lógica para toda la integración.
+- Mantener el mismo diseño visual (CSS) al migrar a React; el objetivo es reorganizar en componentes, no rediseñar.
+- El HTML base adjuntado funciona como referencia visual y lógica durante toda la migración.
