@@ -44,7 +44,6 @@ export function AuthView() {
 
     try {
       const auth = getAuthInstance();
-      const db = getDbInstance();
 
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
@@ -53,6 +52,7 @@ export function AuthView() {
           message: 'Sesión iniciada correctamente.',
         });
       } else {
+        const db = getDbInstance();
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
         await updateProfile(userCredential.user, {
