@@ -12,7 +12,14 @@ const firebaseConfig = {
 };
 
 function getMissingKeys() {
-  return Object.entries(firebaseConfig)
+  const requiredEnv = {
+    VITE_FIREBASE_API_KEY: firebaseConfig.apiKey,
+    VITE_FIREBASE_AUTH_DOMAIN: firebaseConfig.authDomain,
+    VITE_FIREBASE_PROJECT_ID: firebaseConfig.projectId,
+    VITE_FIREBASE_APP_ID: firebaseConfig.appId,
+  };
+
+  return Object.entries(requiredEnv)
     .filter(([, value]) => !value)
     .map(([key]) => key);
 }
