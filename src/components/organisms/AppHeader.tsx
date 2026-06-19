@@ -15,18 +15,24 @@ interface AppHeaderProps {
   activeTab: TabId;
   onTabChange: (tab: TabId) => void;
   onAdd: () => void;
+  onLogout: () => void;
 }
 
-export function AppHeader({ activeTab, onTabChange, onAdd }: AppHeaderProps) {
+export function AppHeader({ activeTab, onTabChange, onAdd, onLogout }: AppHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.top}>
         <div className={styles.logo}>
           📚 Orga<span>Kids</span>
         </div>
-        <button type="button" className={styles.addBtn} onClick={onAdd}>
-          ＋ Agregar
-        </button>
+        <div className={styles.actions}>
+          <button type="button" className={styles.logoutBtn} onClick={onLogout}>
+            Cerrar sesión
+          </button>
+          <button type="button" className={styles.addBtn} onClick={onAdd}>
+            ＋ Agregar
+          </button>
+        </div>
       </div>
       <div className={styles.tabs}>
         {TABS.map((t) => (
