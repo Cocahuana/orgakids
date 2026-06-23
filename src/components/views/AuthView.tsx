@@ -44,7 +44,6 @@ export function AuthView() {
 
     try {
       const auth = getAuthInstance();
-      const db = getDbInstance();
 
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
@@ -53,6 +52,7 @@ export function AuthView() {
           message: 'Sesión iniciada correctamente.',
         });
       } else {
+        const db = getDbInstance();
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
         await updateProfile(userCredential.user, {
@@ -78,9 +78,10 @@ export function AuthView() {
       }
     } catch (error) {
       console.error('Auth/register error:', error);
-      // Try to extract Firebase error code if available
-      // @ts-ignore
-      const code = error?.code ?? null;
+      const code =
+        typeof error === 'object' && error && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : null;
       const message = error instanceof Error ? error.message : 'No se pudo completar la operación.';
       setFeedback({
         kind: 'error',
