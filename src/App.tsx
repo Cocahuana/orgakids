@@ -50,7 +50,7 @@ export default function App() {
 		setModalOpen(true);
 	}
 
-	function openEdit(id: number) {
+	function openEdit(id: string) {
 		const entry = entries.find((e) => e.id === id) ?? null;
 		setEditEntry(entry);
 		setPresetDate("");
@@ -67,7 +67,7 @@ export default function App() {
 		showToast("Entrada actualizada ✓");
 	}
 
-	function handleDelete(id: number) {
+	function handleDelete(id: string) {
 		const entry = entries.find((e) => e.id === id);
 		const label = entry?.title ? ` "${entry.title}"` : "";
 		if (!window.confirm(`¿Eliminar${label}?`)) return;
