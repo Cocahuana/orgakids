@@ -54,7 +54,7 @@ export default function App() {
 		try {
 			await signOut(getAuthInstance());
 		} catch {
-			window.alert("No se pudo cerrar sesión. Intentá de nuevo.");
+			window.alert("No se pudo cerrar sesión, Intentá de nuevo.");
 		}
 	}
 
