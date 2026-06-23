@@ -1,7 +1,7 @@
 export type EntryType = "exam" | "sport" | "event" | "recover" | "work";
 
 export interface Entry {
-	id: number;
+	id: string;
 	type: EntryType;
 	kid: string;
 	title: string;
@@ -18,15 +18,8 @@ export interface Entry {
 }
 
 export interface ShoppingItem {
-	id: number;
+	id: string;
 	name: string;
-}
-
-export interface AppData {
-	entries: Entry[];
-	nextId: number;
-	shopping: ShoppingItem[];
-	nextShoppingId: number;
 }
 
 export type TabId =
