@@ -8,8 +8,8 @@ import styles from "./SectionTitle.module.css";
 
 interface OverviewViewProps {
 	entries: Entry[];
-	onEdit: (id: number) => void;
-	onDelete: (id: number) => void;
+	onEdit: (id: string) => void;
+	onDelete: (id: string) => void;
 	onKpiClick: (type: EntryType) => void;
 }
 

@@ -6,8 +6,8 @@ import styles from "./SupermarketView.module.css";
 interface SupermarketViewProps {
 	shopping: ShoppingItem[];
 	onAdd: (name: string) => void;
-	onUpdate: (id: number, name: string) => void;
-	onDelete: (id: number) => void;
+	onUpdate: (id: string, name: string) => void;
+	onDelete: (id: string) => void;
 	onShowToast: (msg: string) => void;
 }
 
@@ -19,7 +19,7 @@ export function SupermarketView({
 	onShowToast,
 }: SupermarketViewProps) {
 	const [inputValue, setInputValue] = useState("");
-	const [editId, setEditId] = useState<number | null>(null);
+	const [editId, setEditId] = useState<string | null>(null);
 	const [editValue, setEditValue] = useState("");
 
 	function handleAdd(e: React.FormEvent) {
@@ -36,7 +36,7 @@ export function SupermarketView({
 		setEditValue(item.name);
 	}
 
-	function commitEdit(id: number) {
+	function commitEdit(id: string) {
 		const name = editValue.trim();
 		if (name) {
 			onUpdate(id, name);
@@ -45,12 +45,12 @@ export function SupermarketView({
 		setEditId(null);
 	}
 
-	function handleEditKey(e: React.KeyboardEvent, id: number) {
+	function handleEditKey(e: React.KeyboardEvent, id: string) {
 		if (e.key === "Enter") commitEdit(id);
 		if (e.key === "Escape") setEditId(null);
 	}
 
-	function handleDelete(id: number, name: string) {
+	function handleDelete(id: string, name: string) {
 		if (!window.confirm(`¿Eliminar "${name}"?`)) return;
 		onDelete(id);
 		onShowToast("Producto eliminado");

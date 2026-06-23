@@ -16,8 +16,8 @@ import styles from "./EntryCard.module.css";
 interface EntryCardProps {
 	entry: Entry;
 	displayDate?: string; // for calendar day view with recurring sports
-	onEdit: (id: number) => void;
-	onDelete: (id: number) => void;
+	onEdit: (id: string) => void;
+	onDelete: (id: string) => void;
 }
 
 export function EntryCard({

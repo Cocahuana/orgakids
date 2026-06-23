@@ -7,8 +7,8 @@ import styles from "./CalendarGrid.module.css";
 
 interface CalendarGridProps {
 	entries: Entry[];
-	onEdit: (id: number) => void;
-	onDelete: (id: number) => void;
+	onEdit: (id: string) => void;
+	onDelete: (id: string) => void;
 	onAddForDate: (dateStr: string) => void;
 }
 

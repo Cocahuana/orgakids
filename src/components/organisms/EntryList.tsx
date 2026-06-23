@@ -7,8 +7,8 @@ import styles from "./EntryList.module.css";
 interface EntryListProps {
 	entries: Entry[];
 	forDate?: string; // if set, passed to EntryCard as displayDate
-	onEdit: (id: number) => void;
-	onDelete: (id: number) => void;
+	onEdit: (id: string) => void;
+	onDelete: (id: string) => void;
 }
 
 export function EntryList({
