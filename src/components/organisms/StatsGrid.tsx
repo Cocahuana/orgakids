@@ -1,35 +1,44 @@
-import type { Entry } from '../../types';
-import { StatCard } from '../atoms/StatCard';
-import styles from './StatsGrid.module.css';
+import type { Entry, EntryType } from "../../types";
+import { TYPE_INFO } from "../../constants";
+import { StatCard } from "../atoms/StatCard";
+import styles from "./StatsGrid.module.css";
 
 const STAT_DEFS = [
-  { key: 'exam'    as const, icon: '📝', label: 'Exámenes', color: '#FF5C5C' },
-  { key: 'sport'   as const, icon: '⚽', label: 'Deportes',  color: '#2DB87C' },
-  { key: 'event'   as const, icon: '🎉', label: 'Eventos',   color: '#7C5CFC' },
-  { key: 'recover' as const, icon: '⚠️',  label: 'Recuperar', color: '#FF9A00' },
-  { key: 'work'    as const, icon: '📋', label: 'Trabajos',  color: '#0099E6' },
+	{ key: "exam" as const },
+	{ key: "sport" as const },
+	{ key: "event" as const },
+	{ key: "recover" as const },
+	{ key: "work" as const },
 ];
 
 interface StatsGridProps {
-  entries: Entry[];
+	entries: Entry[];
+	onKpiClick?: (type: EntryType) => void;
 }
 
-export function StatsGrid({ entries }: StatsGridProps) {
-  const counts = Object.fromEntries(
-    STAT_DEFS.map((d) => [d.key, entries.filter((e) => e.type === d.key).length]),
-  );
+export function StatsGrid({ entries, onKpiClick }: StatsGridProps) {
+	const counts = Object.fromEntries(
+		STAT_DEFS.map((d) => [
+			d.key,
+			entries.filter((e) => e.type === d.key).length,
+		]),
+	);
 
-  return (
-    <div className={styles.grid}>
-      {STAT_DEFS.map((d) => (
-        <StatCard
-          key={d.key}
-          count={counts[d.key]}
-          icon={d.icon}
-          label={d.label}
-          color={d.color}
-        />
-      ))}
-    </div>
-  );
+	return (
+		<div className={styles.grid}>
+			{STAT_DEFS.map(({ key }) => {
+				const ti = TYPE_INFO[key];
+				return (
+					<StatCard
+						key={key}
+						count={counts[key]}
+						icon={ti.icon}
+						label={ti.plural}
+						color={ti.color}
+						onClick={onKpiClick ? () => onKpiClick(key) : undefined}
+					/>
+				);
+			})}
+		</div>
+	);
 }

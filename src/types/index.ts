@@ -1,27 +1,33 @@
-export type EntryType = 'exam' | 'sport' | 'event' | 'recover' | 'work';
+export type EntryType = "exam" | "sport" | "event" | "recover" | "work";
 
 export interface Entry {
-  id: number;
-  type: EntryType;
-  kid: string;
-  title: string;
-  date: string;
-  time: string;
-  grade: string;
-  notes: string;
-  recur: string;
+	id: string;
+	type: EntryType;
+	kid: string;
+	title: string;
+	date: string;
+	timeFrom: string;
+	timeTo: string;
+	grade: string;
+	notes: string;
+	// Repeat (sports only)
+	repeatEnabled: boolean;
+	repeatFrom: string;
+	repeatTo: string;
+	repeatDays: number[]; // 0=Sun … 6=Sat
 }
 
-export interface AppData {
-  entries: Entry[];
-  nextId: number;
+export interface ShoppingItem {
+	id: string;
+	name: string;
 }
 
 export type TabId =
-  | 'overview'
-  | 'calendar'
-  | 'exams'
-  | 'sports'
-  | 'events'
-  | 'recover'
-  | 'works';
+	| "overview"
+	| "calendar"
+	| "supermarket"
+	| "exams"
+	| "sports"
+	| "events"
+	| "recover"
+	| "works";

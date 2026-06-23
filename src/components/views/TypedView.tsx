@@ -6,8 +6,8 @@ import styles from './SectionTitle.module.css';
 interface TypedViewProps {
   type: EntryType;
   entries: Entry[];
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 export function TypedView({ type, entries, onEdit, onDelete }: TypedViewProps) {
