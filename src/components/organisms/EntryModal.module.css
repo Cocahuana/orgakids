@@ -76,3 +76,59 @@
 @media (max-width: 520px) {
   .row { grid-template-columns: 1fr; }
 }
+
+/* ── Sport repeat toggle ── */
+.toggle {
+  display: flex;
+  gap: 6px;
+  background: var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggleActive {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Weekday picker ── */
+.days {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dayBtn {
+  min-width: 42px;
+  padding: 7px 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.dayActive {
+  background: var(--sport);
+  border-color: var(--sport);
+  color: #fff;
+}

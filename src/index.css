@@ -28,6 +28,10 @@
   --work-bg:        #E6F6FF;
   --work-border:    #AADFF7;
 
+  --shop:           #E35D9A;
+  --shop-bg:        #FFF1F7;
+  --shop-border:    #F5BED7;
+
   --radius: 14px;
   --shadow: 0 2px 12px rgba(30, 40, 100, 0.07);
 }

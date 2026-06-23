@@ -1,19 +1,33 @@
 import { useEffect, useState } from "react";
 import type { User } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import type { Entry, TabId } from "./types";
+import type { Entry, EntryType, TabId } from "./types";
 import { useEntries } from "./hooks/useEntries";
+import { useToast } from "./hooks/useToast";
+import { TYPE_INFO } from "./constants";
 import { getAuthInstance } from "./lib/firebase";
 import { AppHeader } from "./components/organisms/AppHeader";
 import { EntryModal } from "./components/organisms/EntryModal";
 import { OverviewView } from "./components/views/OverviewView";
 import { CalendarView } from "./components/views/CalendarView";
 import { TypedView } from "./components/views/TypedView";
+import { SupermarketView } from "./components/views/SupermarketView";
 import { AuthView } from "./components/views/AuthView";
+import { Toast } from "./components/atoms/Toast";
 import styles from "./App.module.css";
 
 export default function App() {
-	const { entries, addEntry, updateEntry, deleteEntry } = useEntries();
+	const {
+		entries,
+		shopping,
+		addEntry,
+		updateEntry,
+		deleteEntry,
+		addShoppingItem,
+		updateShoppingItem,
+		deleteShoppingItem,
+	} = useEntries();
+	const { message: toastMsg, visible: toastVisible, showToast } = useToast();
 	const [activeTab, setActiveTab] = useState<TabId>("overview");
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editEntry, setEditEntry] = useState<Entry | null>(null);
@@ -43,11 +57,26 @@ export default function App() {
 		setModalOpen(true);
 	}
 
+	function handleSave(entry: Omit<Entry, "id">) {
+		addEntry(entry);
+		showToast("Entrada guardada ✓");
+	}
+
+	function handleUpdate(entry: Entry) {
+		updateEntry(entry);
+		showToast("Entrada actualizada ✓");
+	}
+
 	function handleDelete(id: number) {
 		const entry = entries.find((e) => e.id === id);
 		const label = entry?.title ? ` "${entry.title}"` : "";
 		if (!window.confirm(`¿Eliminar${label}?`)) return;
 		deleteEntry(id);
+		showToast("Entrada eliminada");
+	}
+
+	function handleKpiClick(type: EntryType) {
+		setActiveTab(TYPE_INFO[type].view);
 	}
 
 	async function handleLogout() {
@@ -81,6 +110,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
+						onKpiClick={handleKpiClick}
 					/>
 				)}
 				{activeTab === "calendar" && (
@@ -89,6 +119,15 @@ export default function App() {
 						onEdit={openEdit}
 						onDelete={handleDelete}
 						onAddForDate={openAdd}
+					/>
+				)}
+				{activeTab === "supermarket" && (
+					<SupermarketView
+						shopping={shopping}
+						onAdd={addShoppingItem}
+						onUpdate={updateShoppingItem}
+						onDelete={deleteShoppingItem}
+						onShowToast={showToast}
 					/>
 				)}
 				{activeTab === "exams" && (
@@ -138,11 +177,12 @@ export default function App() {
 					open={modalOpen}
 					editEntry={editEntry}
 					presetDate={presetDate}
-					onSave={addEntry}
-					onUpdate={updateEntry}
+					onSave={handleSave}
+					onUpdate={handleUpdate}
 					onClose={() => setModalOpen(false)}
 				/>
 			)}
+			<Toast message={toastMsg} visible={toastVisible} />
 		</>
 	);
 }
