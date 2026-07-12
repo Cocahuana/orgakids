@@ -32,10 +32,22 @@ export function EntryCard({
 	const ub = days !== null ? urgencyBadge(days) : null;
 
 	const meta: string[] = [];
+	const isMultiDayEvent =
+		entry.type === "event" && entry.dateTo && entry.dateTo > (entry.date || "");
 	const dateToShow = displayDate ?? (entry.repeatEnabled ? "" : entry.date);
-	if (dateToShow) meta.push(`📅 ${formatDate(dateToShow)}`);
-	const timeRange = formatTimeRange(entry);
-	if (timeRange) meta.push(`🕐 ${timeRange}`);
+	if (isMultiDayEvent) {
+		meta.push(
+			`📅 ${formatDate(entry.date)} → ${formatDate(entry.dateTo!)}`,
+		);
+	} else if (dateToShow) {
+		meta.push(`📅 ${formatDate(dateToShow)}`);
+	}
+	if (entry.type === "medical" && entry.medicalTime) {
+		meta.push(`🕐 ${entry.medicalTime}`);
+	} else {
+		const timeRange = formatTimeRange(entry);
+		if (timeRange) meta.push(`🕐 ${timeRange}`);
+	}
 	const recur = recurrenceText(entry);
 	if (recur) meta.push(`🔁 ${recur}`);
 	if (entry.grade) meta.push(`📊 Nota: ${entry.grade}`);

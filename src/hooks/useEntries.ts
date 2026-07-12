@@ -7,15 +7,18 @@ import {
 	deleteDoc,
 	onSnapshot,
 } from "firebase/firestore";
-import type { Entry, EntryType, ShoppingItem } from "../types";
+import type { Entry, EntryType, ShoppingItem, Nota } from "../types";
+import { todayISO } from "../utils";
 import { getDbInstance } from "../lib/firebase";
 
 const ENTRIES_COL = "entries";
 const SHOPPING_COL = "shopping";
+const NOTAS_COL = "notas";
 
 export function useEntries() {
 	const [entries, setEntries] = useState<Entry[]>([]);
 	const [shopping, setShopping] = useState<ShoppingItem[]>([]);
+	const [notas, setNotas] = useState<Nota[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -43,9 +46,20 @@ export function useEntries() {
 			},
 		);
 
+		const unsubNotas = onSnapshot(
+			collection(db, NOTAS_COL),
+			(snapshot) => {
+				const data = snapshot.docs.map(
+					(d) => ({ id: d.id, ...d.data() }) as Nota,
+				);
+				setNotas(data);
+			},
+		);
+
 		return () => {
 			unsubEntries();
 			unsubShopping();
+			unsubNotas();
 		};
 	}, []);
 
@@ -87,9 +101,31 @@ export function useEntries() {
 		deleteDoc(doc(db, SHOPPING_COL, id)).catch(console.error);
 	}, []);
 
+	// ── Notas CRUD ────────────────────────────────────────────────────────────
+
+	const addNota = useCallback(() => {
+		const db = getDbInstance();
+		addDoc(collection(db, NOTAS_COL), {
+			title: "",
+			body: "",
+			created: todayISO(),
+		}).catch(console.error);
+	}, []);
+
+	const updateNota = useCallback((id: string, title: string, body: string) => {
+		const db = getDbInstance();
+		updateDoc(doc(db, NOTAS_COL, id), { title, body }).catch(console.error);
+	}, []);
+
+	const deleteNota = useCallback((id: string) => {
+		const db = getDbInstance();
+		deleteDoc(doc(db, NOTAS_COL, id)).catch(console.error);
+	}, []);
+
 	return {
 		entries,
 		shopping,
+		notas,
 		loading,
 		addEntry,
 		updateEntry,
@@ -98,5 +134,8 @@ export function useEntries() {
 		addShoppingItem,
 		updateShoppingItem,
 		deleteShoppingItem,
+		addNota,
+		updateNota,
+		deleteNota,
 	};
 }

@@ -1,4 +1,4 @@
-export type EntryType = "exam" | "sport" | "event" | "recover" | "work";
+export type EntryType = "exam" | "sport" | "event" | "recover" | "work" | "medical";
 
 export interface Entry {
 	id: string;
@@ -6,8 +6,10 @@ export interface Entry {
 	kid: string;
 	title: string;
 	date: string;
+	dateTo?: string; // For multi-day events
 	timeFrom: string;
 	timeTo: string;
+	medicalTime?: string; // For medical appointments
 	grade: string;
 	notes: string;
 	// Repeat (sports only)
@@ -15,6 +17,13 @@ export interface Entry {
 	repeatFrom: string;
 	repeatTo: string;
 	repeatDays: number[]; // 0=Sun … 6=Sat
+}
+
+export interface Nota {
+	id: string;
+	title: string;
+	body: string;
+	created: string;
 }
 
 export interface ShoppingItem {
@@ -29,5 +38,7 @@ export type TabId =
 	| "exams"
 	| "sports"
 	| "events"
+	| "medical"
 	| "recover"
-	| "works";
+	| "works"
+	| "notas";

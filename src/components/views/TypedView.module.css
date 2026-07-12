@@ -1,0 +1,18 @@
+.header {
+	justify-content: space-between !important;
+	margin-bottom: 14px !important;
+}
+
+.addBtn {
+	border: 0;
+	border-radius: 9px;
+	background: #7c9fff;
+	color: #fff;
+	padding: 8px 12px;
+	font-family: "Nunito", sans-serif;
+	font-size: 12px;
+	font-weight: 900;
+	cursor: pointer;
+	white-space: nowrap;
+	flex-shrink: 0;
+}

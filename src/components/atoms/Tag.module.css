@@ -13,3 +13,4 @@
 .tag--event   { background: var(--event-border);   color: var(--event); }
 .tag--recover { background: var(--recover-border); color: #cc7a00; }
 .tag--work    { background: var(--work-border);    color: #0077b3; }
+.tag--medical { background: var(--medical-border); color: var(--medical); }

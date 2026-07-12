@@ -32,6 +32,10 @@
   --shop-bg:        #FFF1F7;
   --shop-border:    #F5BED7;
 
+  --medical:        #e63982;
+  --medical-bg:     #fff1f7;
+  --medical-border: #f5bed7;
+
   --radius: 14px;
   --shadow: 0 2px 12px rgba(30, 40, 100, 0.07);
 }

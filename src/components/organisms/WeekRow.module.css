@@ -1,51 +1,100 @@
+.sectionTitle {
+	font-family: "Nunito", sans-serif;
+	font-size: 18px;
+	font-weight: 800;
+	margin-bottom: 13px;
+	color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sectionDot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: inline-block;
+	flex-shrink: 0;
+	background: #ff5c5c;
+}
+
 .row {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin-bottom: 24px;
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 6px;
+	margin-bottom: 8px;
 }
 
 .cell {
-  background: var(--surface);
-  border-radius: 10px;
-  padding: 10px 6px 8px;
-  text-align: center;
-  box-shadow: var(--shadow);
+	background: var(--surface);
+	border-radius: 10px;
+	padding: 10px 6px 8px;
+	text-align: center;
+	box-shadow: var(--shadow);
+	border: 2px solid transparent;
+	cursor: pointer;
+	transition: border-color 0.12s, background 0.12s;
+	color: var(--text);
+	width: 100%;
 }
 
-.cell.today {
-  background: var(--text);
-  color: #fff;
+.cell:hover {
+	border-color: #c7d2ff;
+}
+
+.today {
+	background: #e8ecff;
+	border-color: var(--text) !important;
+}
+
+.selected {
+	background: var(--text) !important;
+	color: #fff !important;
+	border-color: transparent !important;
 }
 
 .name {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  margin-bottom: 4px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--muted);
+	margin-bottom: 4px;
 }
-.today .name { color: rgba(255, 255, 255, 0.6); }
+
+.selected .name {
+	color: rgba(255, 255, 255, 0.6);
+}
 
 .num {
-  font-family: 'Nunito', sans-serif;
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 1;
-  margin-bottom: 6px;
+	font-family: "Nunito", sans-serif;
+	font-size: 18px;
+	font-weight: 900;
+	line-height: 1;
+	margin-bottom: 6px;
 }
 
 .dots {
-  display: flex;
-  gap: 2px;
-  justify-content: center;
-  flex-wrap: wrap;
+	display: flex;
+	gap: 2px;
+	justify-content: center;
+	flex-wrap: wrap;
+	min-height: 8px;
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.dayLabel {
+	font-family: "Nunito", sans-serif;
+	font-size: 15px;
+	font-weight: 800;
+	color: var(--muted);
+	text-transform: capitalize;
+	margin: 14px 0 10px;
+	padding-left: 2px;
 }

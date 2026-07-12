@@ -77,6 +77,9 @@ export function occursOnDate(entry: Entry, dateStr: string): boolean {
 		const d = new Date(`${dateStr}T00:00:00`);
 		return entry.repeatDays.includes(d.getDay());
 	}
+	if (entry.type === "event" && entry.dateTo && entry.dateTo > (entry.date || "")) {
+		return dateStr >= entry.date && dateStr <= entry.dateTo;
+	}
 	return entry.date === dateStr;
 }
 
@@ -115,4 +118,13 @@ export function formatTimeRange(
 	if (timeFrom) return `Desde ${timeFrom}`;
 	if (timeTo) return `Hasta ${timeTo}`;
 	return "";
+}
+
+/** Returns true if the entry's date is in the past and it has no future occurrences. */
+export function isExpired(entry: Entry): boolean {
+	const today = todayISO();
+	if (entry.type === "sport" && entry.repeatEnabled) return false;
+	if (entry.type === "event" && entry.dateTo) return entry.dateTo < today;
+	if (!entry.date) return false;
+	return entry.date < today;
 }

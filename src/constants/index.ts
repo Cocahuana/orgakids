@@ -57,6 +57,15 @@ export const TYPE_INFO: Record<
 		color: "#0099E6",
 		view: "works",
 	},
+	medical: {
+		icon: "🚑",
+		label: "Turno Médico",
+		plural: "Turnos Médicos",
+		cls: "medical",
+		tag: "Turno Médico",
+		color: "#e63982",
+		view: "medical",
+	},
 };
 
 export const CALENDAR_TYPE_ORDER: EntryType[] = [
@@ -65,12 +74,14 @@ export const CALENDAR_TYPE_ORDER: EntryType[] = [
 	"event",
 	"recover",
 	"work",
+	"medical",
 ];
 
 export const TITLE_LABELS: Record<EntryType, string> = {
 	exam: "Materia",
 	sport: "Deporte / Actividad",
-	event: "Descripción del evento",
+	event: "Evento",
 	recover: "Materia a recuperar",
-	work: "Nombre del trabajo",
+	work: "Trabajo / Entrega",
+	medical: "Especialidad Médica",
 };

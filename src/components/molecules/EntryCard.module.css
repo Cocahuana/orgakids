@@ -17,6 +17,7 @@
 .card--event   { border-left-color: var(--event);   background: var(--event-bg); }
 .card--recover { border-left-color: var(--recover); background: var(--recover-bg); }
 .card--work    { border-left-color: var(--work);    background: var(--work-bg); }
+.card--medical { border-left-color: var(--medical); background: var(--medical-bg); }
 
 .icon {
   font-size: 24px;

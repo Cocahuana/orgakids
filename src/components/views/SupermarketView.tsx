@@ -50,8 +50,7 @@ export function SupermarketView({
 		if (e.key === "Escape") setEditId(null);
 	}
 
-	function handleDelete(id: string, name: string) {
-		if (!window.confirm(`¿Eliminar "${name}"?`)) return;
+	function handleDelete(id: string) {
 		onDelete(id);
 		onShowToast("Producto eliminado");
 	}
@@ -102,7 +101,7 @@ export function SupermarketView({
 							/>
 							<IconButton
 								variant='delete'
-								onClick={() => handleDelete(item.id, item.name)}
+								onClick={() => handleDelete(item.id)}
 							/>
 						</div>
 					</li>

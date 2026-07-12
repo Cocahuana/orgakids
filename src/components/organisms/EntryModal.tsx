@@ -7,6 +7,7 @@ interface EntryModalProps {
 	open: boolean;
 	editEntry: Entry | null;
 	presetDate?: string;
+	presetType?: EntryType | null;
 	onSave: (entry: Omit<Entry, "id">) => void;
 	onUpdate: (entry: Entry) => void;
 	onClose: () => void;
@@ -27,8 +28,10 @@ const EMPTY_FORM = {
 	kid: "",
 	title: "",
 	date: "",
+	dateTo: "",
 	timeFrom: "",
 	timeTo: "",
+	medicalTime: "",
 	grade: "",
 	notes: "",
 	repeatEnabled: false,
@@ -41,6 +44,7 @@ export function EntryModal({
 	open,
 	editEntry,
 	presetDate,
+	presetType,
 	onSave,
 	onUpdate,
 	onClose,
@@ -55,8 +59,10 @@ export function EntryModal({
 				kid: editEntry.kid,
 				title: editEntry.title,
 				date: editEntry.date,
+				dateTo: editEntry.dateTo ?? "",
 				timeFrom: editEntry.timeFrom,
 				timeTo: editEntry.timeTo,
+				medicalTime: editEntry.medicalTime ?? "",
 				grade: editEntry.grade,
 				notes: editEntry.notes,
 				repeatEnabled: editEntry.repeatEnabled,
@@ -65,9 +71,13 @@ export function EntryModal({
 				repeatDays: [...editEntry.repeatDays],
 			});
 		} else {
-			setForm({ ...EMPTY_FORM, date: presetDate ?? "" });
+			setForm({
+				...EMPTY_FORM,
+				date: presetDate ?? "",
+				type: presetType ?? "exam",
+			});
 		}
-	}, [open, editEntry, presetDate]);
+	}, [open, editEntry, presetDate, presetType]);
 
 	if (!open) return null;
 
@@ -89,23 +99,52 @@ export function EntryModal({
 			alert("Por favor ingresá una descripción.");
 			return;
 		}
-		if (form.type === "sport" && form.repeatEnabled) {
-			if (!form.repeatFrom || !form.repeatTo) {
-				alert("Ingresá las fechas de inicio y fin de la repetición.");
+		const isRecover = form.type === "recover";
+		const noTimeTypes = ["work", "exam", "recover", "medical"];
+		if (!isRecover) {
+			if (form.type === "sport" && form.repeatEnabled) {
+				if (!form.repeatFrom || !form.repeatTo) {
+					alert("Ingresá las fechas de inicio y fin de la repetición.");
+					return;
+				}
+				if (!form.repeatDays.length) {
+					alert("Seleccioná al menos un día de la semana.");
+					return;
+				}
+			} else if (!form.date) {
+				alert("Por favor ingresá una fecha.");
 				return;
 			}
-			if (!form.repeatDays.length) {
-				alert("Seleccioná al menos un día de la semana.");
-				return;
-			}
-		} else if (!form.date) {
-			alert("Por favor ingresá una fecha.");
-			return;
 		}
+		const entryData: Omit<Entry, "id"> = {
+			type: form.type,
+			kid: form.kid,
+			title: form.title,
+			date: isRecover ? "" : form.date,
+			dateTo: form.type === "event" ? form.dateTo : "",
+			timeFrom: noTimeTypes.includes(form.type) ? "" : form.timeFrom,
+			timeTo: noTimeTypes.includes(form.type) ? "" : form.timeTo,
+			medicalTime: form.type === "medical" ? form.medicalTime : "",
+			grade: isRecover ? form.grade : "",
+			notes: form.notes,
+			repeatEnabled: form.type === "sport" ? form.repeatEnabled : false,
+			repeatFrom:
+				form.type === "sport" && form.repeatEnabled
+					? form.repeatFrom
+					: "",
+			repeatTo:
+				form.type === "sport" && form.repeatEnabled
+					? form.repeatTo
+					: "",
+			repeatDays:
+				form.type === "sport" && form.repeatEnabled
+					? form.repeatDays
+					: [],
+		};
 		if (editEntry) {
-			onUpdate({ ...form, id: editEntry.id });
+			onUpdate({ ...entryData, id: editEntry.id });
 		} else {
-			onSave(form);
+			onSave(entryData);
 		}
 		onClose();
 	}
@@ -116,6 +155,12 @@ export function EntryModal({
 
 	const isEdit = editEntry !== null;
 	const isSport = form.type === "sport";
+	const isMedical = form.type === "medical";
+	const isEvent = form.type === "event";
+	const isRecover = form.type === "recover";
+	const hideTimeFields = ["work", "exam", "recover", "medical"].includes(
+		form.type,
+	);
 
 	return (
 		<div className={styles.overlay} onClick={handleBackdrop}>
@@ -138,15 +183,18 @@ export function EntryModal({
 					>
 						<option value='exam'>📝 Examen</option>
 						<option value='sport'>⚽ Deporte</option>
-						<option value='event'>🎉 Evento fin de semana</option>
-						<option value='recover'>⚠️ Nota a recuperar</option>
+					<option value='event'>🎉 Evento</option>
+					<option value='medical'>🚑 Turno Médico</option>
+					<option value='recover'>⚠️ Materia a recuperar</option>
 						<option value='work'>📋 Entrega de trabajo</option>
 					</select>
 				</div>
 
 				{/* Kid */}
 				<div className={styles.group}>
-					<label htmlFor='fKid'>Alumno / Hijo</label>
+					<label htmlFor='fKid'>
+						{isMedical || isEvent ? "Nombre" : "Alumno / Hijo"}
+					</label>
 					<input
 						id='fKid'
 						type='text'
@@ -192,14 +240,18 @@ export function EntryModal({
 				)}
 
 				{/* Non-repeat: single date + time */}
-				{!form.repeatEnabled && (
+				{!form.repeatEnabled && !isRecover && (
 					<>
 						<div className={styles.row}>
 							<div
 								className={styles.group}
 								style={{ marginBottom: 0 }}
 							>
-								<label htmlFor='fDate'>Fecha</label>
+								<label htmlFor='fDate'>
+									{isMedical
+										? "Fecha del Turno"
+										: "Fecha"}
+								</label>
 								<input
 									id='fDate'
 									type='date'
@@ -209,32 +261,84 @@ export function EntryModal({
 									}
 								/>
 							</div>
+							{isEvent && (
+								<div
+									className={styles.group}
+									style={{ marginBottom: 0 }}
+								>
+									<label htmlFor='fDateTo'>
+										Fecha hasta
+									</label>
+									<input
+										id='fDateTo'
+										type='date'
+										value={form.dateTo}
+										onChange={(e) =>
+											set("dateTo", e.target.value)
+										}
+									/>
+								</div>
+							)}
+						</div>
+						{isMedical && (
 							<div
 								className={styles.group}
-								style={{ marginBottom: 0 }}
+								style={{ marginTop: 10 }}
 							>
-								<label htmlFor='fTimeFrom'>Hora desde</label>
+								<label htmlFor='fMedicalTime'>
+									Horario del Turno
+								</label>
 								<input
-									id='fTimeFrom'
+									id='fMedicalTime'
 									type='time'
-									value={form.timeFrom}
+									value={form.medicalTime}
 									onChange={(e) =>
-										set("timeFrom", e.target.value)
+										set("medicalTime", e.target.value)
 									}
 								/>
 							</div>
-						</div>
-						<div className={styles.group} style={{ marginTop: 10 }}>
-							<label htmlFor='fTimeTo'>
-								Hora hasta (opcional)
-							</label>
-							<input
-								id='fTimeTo'
-								type='time'
-								value={form.timeTo}
-								onChange={(e) => set("timeTo", e.target.value)}
-							/>
-						</div>
+						)}
+						{!hideTimeFields && (
+							<>
+								<div
+									className={styles.row}
+									style={{ marginTop: 10 }}
+								>
+									<div
+										className={styles.group}
+										style={{ marginBottom: 0 }}
+									>
+										<label htmlFor='fTimeFrom'>
+											Hora desde
+										</label>
+										<input
+											id='fTimeFrom'
+											type='time'
+											value={form.timeFrom}
+											onChange={(e) =>
+												set("timeFrom", e.target.value)
+											}
+										/>
+									</div>
+									<div
+										className={styles.group}
+										style={{ marginBottom: 0 }}
+									>
+										<label htmlFor='fTimeTo'>
+											Hora hasta
+										</label>
+										<input
+											id='fTimeTo'
+											type='time'
+											value={form.timeTo}
+											onChange={(e) =>
+												set("timeTo", e.target.value)
+											}
+										/>
+									</div>
+								</div>
+							</>
+						)}
 					</>
 				)}
 
@@ -321,8 +425,8 @@ export function EntryModal({
 					</>
 				)}
 
-				{/* Grade (exam / recover) */}
-				{(form.type === "recover" || form.type === "exam") && (
+				{/* Grade (recover only) */}
+				{isRecover && (
 					<div className={styles.group} style={{ marginTop: 14 }}>
 						<label htmlFor='fGrade'>Nota actual</label>
 						<input

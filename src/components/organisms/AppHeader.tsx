@@ -8,8 +8,10 @@ const TABS: { id: TabId; label: string }[] = [
 	{ id: "exams", label: "📝 Exámenes" },
 	{ id: "sports", label: "⚽ Deportes" },
 	{ id: "events", label: "🎉 Eventos" },
+	{ id: "medical", label: "🚑 Turnos" },
 	{ id: "recover", label: "⚠️ Recuperar" },
 	{ id: "works", label: "📋 Trabajos" },
+	{ id: "notas", label: "📓 Notas" },
 ];
 
 interface AppHeaderProps {
@@ -29,7 +31,7 @@ export function AppHeader({
 		<header className={styles.header}>
 			<div className={styles.top}>
 				<div className={styles.logo}>
-					📚 Orga<span>Kids</span>
+					🏠 Org<span>Famy</span>
 				</div>
 				<div className={styles.actions}>
 					<button
