@@ -46,15 +46,12 @@ export function useEntries() {
 			},
 		);
 
-		const unsubNotas = onSnapshot(
-			collection(db, NOTAS_COL),
-			(snapshot) => {
-				const data = snapshot.docs.map(
-					(d) => ({ id: d.id, ...d.data() }) as Nota,
-				);
-				setNotas(data);
-			},
-		);
+		const unsubNotas = onSnapshot(collection(db, NOTAS_COL), (snapshot) => {
+			const data = snapshot.docs.map(
+				(d) => ({ id: d.id, ...d.data() }) as Nota,
+			);
+			setNotas(data);
+		});
 
 		return () => {
 			unsubEntries();
@@ -112,10 +109,15 @@ export function useEntries() {
 		}).catch(console.error);
 	}, []);
 
-	const updateNota = useCallback((id: string, title: string, body: string) => {
-		const db = getDbInstance();
-		updateDoc(doc(db, NOTAS_COL, id), { title, body }).catch(console.error);
-	}, []);
+	const updateNota = useCallback(
+		(id: string, title: string, body: string) => {
+			const db = getDbInstance();
+			updateDoc(doc(db, NOTAS_COL, id), { title, body }).catch(
+				console.error,
+			);
+		},
+		[],
+	);
 
 	const deleteNota = useCallback((id: string) => {
 		const db = getDbInstance();

@@ -31,7 +31,8 @@ function getWeekStart(): Date {
 
 function getWeekTitle(): string {
 	const now = new Date();
-	if (now.getDay() === 0 && now.getHours() >= 17) return "Resumen próxima Semana";
+	if (now.getDay() === 0 && now.getHours() >= 17)
+		return "Resumen próxima Semana";
 	return "Resumen de la Semana";
 }
 
@@ -125,4 +126,3 @@ export function WeekRow({ entries, onEdit, onDelete }: WeekRowProps) {
 		</>
 	);
 }
-

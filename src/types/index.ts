@@ -1,4 +1,10 @@
-export type EntryType = "exam" | "sport" | "event" | "recover" | "work" | "medical";
+export type EntryType =
+	| "exam"
+	| "sport"
+	| "event"
+	| "recover"
+	| "work"
+	| "medical";
 
 export interface Entry {
 	id: string;

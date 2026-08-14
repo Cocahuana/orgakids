@@ -48,7 +48,9 @@ export function StatsGrid({
 				icon='🛒'
 				label='Supermercado'
 				color='var(--shop)'
-				onClick={onNavigate ? () => onNavigate("supermarket") : undefined}
+				onClick={
+					onNavigate ? () => onNavigate("supermarket") : undefined
+				}
 			/>
 			<StatCard
 				count={notasCount}
@@ -60,4 +62,3 @@ export function StatsGrid({
 		</div>
 	);
 }
-

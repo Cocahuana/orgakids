@@ -104,7 +104,9 @@ export function EntryModal({
 		if (!isRecover) {
 			if (form.type === "sport" && form.repeatEnabled) {
 				if (!form.repeatFrom || !form.repeatTo) {
-					alert("Ingresá las fechas de inicio y fin de la repetición.");
+					alert(
+						"Ingresá las fechas de inicio y fin de la repetición.",
+					);
 					return;
 				}
 				if (!form.repeatDays.length) {
@@ -183,9 +185,9 @@ export function EntryModal({
 					>
 						<option value='exam'>📝 Examen</option>
 						<option value='sport'>⚽ Deporte</option>
-					<option value='event'>🎉 Evento</option>
-					<option value='medical'>🚑 Turno Médico</option>
-					<option value='recover'>⚠️ Materia a recuperar</option>
+						<option value='event'>🎉 Evento</option>
+						<option value='medical'>🚑 Turno Médico</option>
+						<option value='recover'>⚠️ Materia a recuperar</option>
 						<option value='work'>📋 Entrega de trabajo</option>
 					</select>
 				</div>
@@ -248,9 +250,7 @@ export function EntryModal({
 								style={{ marginBottom: 0 }}
 							>
 								<label htmlFor='fDate'>
-									{isMedical
-										? "Fecha del Turno"
-										: "Fecha"}
+									{isMedical ? "Fecha del Turno" : "Fecha"}
 								</label>
 								<input
 									id='fDate'
@@ -266,9 +266,7 @@ export function EntryModal({
 									className={styles.group}
 									style={{ marginBottom: 0 }}
 								>
-									<label htmlFor='fDateTo'>
-										Fecha hasta
-									</label>
+									<label htmlFor='fDateTo'>Fecha hasta</label>
 									<input
 										id='fDateTo'
 										type='date'

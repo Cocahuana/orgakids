@@ -33,7 +33,9 @@ export function EntryCard({
 
 	const meta: string[] = [];
 	const isMultiDayEvent =
-		entry.type === "event" && entry.dateTo && entry.dateTo > (entry.date || "");
+		entry.type === "event" &&
+		entry.dateTo &&
+		entry.dateTo > (entry.date || "");
 	const dateToShow = displayDate ?? (entry.repeatEnabled ? "" : entry.date);
 	if (isMultiDayEvent) {
 		meta.push(
