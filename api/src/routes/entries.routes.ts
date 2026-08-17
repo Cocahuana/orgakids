@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { Entry, ENTRY_TYPES, toEntryDTO } from "../models/index.js";
+import { Entry, ENTRY_TYPES, toEntryDTO, UserFamily } from "../models/index.js";
 import { getAuth } from "../middleware/auth.js";
 import { HttpError } from "../utils/HttpError.js";
 import { emitToFamily } from "../realtime/io.js";
@@ -62,10 +62,33 @@ function toAttributes(input: z.infer<typeof entrySchema>) {
 	};
 }
 
+async function resolveFamilyScope(
+	req: { query: Record<string, unknown> },
+	userId: string,
+	defaultFamilyId: string,
+) {
+	const requestedFamilyId =
+		typeof req.query.familyId === "string"
+			? req.query.familyId
+			: defaultFamilyId;
+
+	if (requestedFamilyId === defaultFamilyId) return requestedFamilyId;
+
+	const membership = await UserFamily.findOne({
+		where: { userId, familyId: requestedFamilyId },
+	});
+	if (!membership) {
+		throw new HttpError(403, "No tenés acceso a esa familia");
+	}
+	return requestedFamilyId;
+}
+
 entriesRouter.get("/", async (req, res) => {
-	const { familyId } = getAuth(req);
+	const { userId, familyId } = getAuth(req);
+	const selectedFamilyId = await resolveFamilyScope(req, userId, familyId);
+
 	const entries = await Entry.findAll({
-		where: { familyId },
+		where: { familyId: selectedFamilyId },
 		order: [
 			["date", "ASC"],
 			["createdAt", "ASC"],
@@ -75,38 +98,41 @@ entriesRouter.get("/", async (req, res) => {
 });
 
 entriesRouter.post("/", async (req, res) => {
-	const { familyId } = getAuth(req);
+	const { userId, familyId } = getAuth(req);
+	const selectedFamilyId = await resolveFamilyScope(req, userId, familyId);
 	const entry = await Entry.create({
-		familyId,
+		familyId: selectedFamilyId,
 		...toAttributes(entrySchema.parse(req.body)),
 	});
 
 	const dto = toEntryDTO(entry);
-	emitToFamily(familyId, "entries:upsert", dto);
+	emitToFamily(selectedFamilyId, "entries:upsert", dto);
 	res.status(201).json(dto);
 });
 
 entriesRouter.put("/:id", async (req, res) => {
-	const { familyId } = getAuth(req);
+	const { userId, familyId } = getAuth(req);
+	const selectedFamilyId = await resolveFamilyScope(req, userId, familyId);
 	const entry = await Entry.findOne({
-		where: { id: req.params.id, familyId },
+		where: { id: req.params.id, familyId: selectedFamilyId },
 	});
 	if (!entry) throw new HttpError(404, "La actividad no existe");
 
 	await entry.update(toAttributes(entrySchema.parse(req.body)));
 
 	const dto = toEntryDTO(entry);
-	emitToFamily(familyId, "entries:upsert", dto);
+	emitToFamily(selectedFamilyId, "entries:upsert", dto);
 	res.json(dto);
 });
 
 entriesRouter.delete("/:id", async (req, res) => {
-	const { familyId } = getAuth(req);
+	const { userId, familyId } = getAuth(req);
+	const selectedFamilyId = await resolveFamilyScope(req, userId, familyId);
 	const deleted = await Entry.destroy({
-		where: { id: req.params.id, familyId },
+		where: { id: req.params.id, familyId: selectedFamilyId },
 	});
 	if (!deleted) throw new HttpError(404, "La actividad no existe");
 
-	emitToFamily(familyId, "entries:deleted", { id: req.params.id });
+	emitToFamily(selectedFamilyId, "entries:deleted", { id: req.params.id });
 	res.status(204).end();
 });

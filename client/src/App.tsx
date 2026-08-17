@@ -20,11 +20,18 @@ export default function App() {
 	const {
 		user,
 		family,
+		scopes,
+		selectedScope,
+		setSelectedScopeId,
 		loading: isAuthLoading,
 		login,
 		register,
 		logout,
 	} = useAuth();
+	const activeFamilyId =
+		selectedScope?.kind === "family"
+			? selectedScope.id
+			: (family?.id ?? null);
 	const {
 		entries,
 		shopping,
@@ -38,7 +45,11 @@ export default function App() {
 		addNota,
 		updateNota,
 		deleteNota,
-	} = useEntries(user !== null);
+	} = useEntries(user !== null, {
+		kind: selectedScope?.kind ?? "personal",
+		familyId: activeFamilyId ?? undefined,
+		userName: user?.name ?? "",
+	});
 	const { message: toastMsg, visible: toastVisible, showToast } = useToast();
 	const [activeTab, setActiveTab] = useState<TabId>("overview");
 	const [modalOpen, setModalOpen] = useState(false);
@@ -133,6 +144,9 @@ export default function App() {
 				onAdd={() => openAdd()}
 				onLogout={logout}
 				inviteCode={family?.inviteCode}
+				scopes={scopes}
+				selectedScopeId={selectedScope?.id ?? "personal"}
+				onScopeChange={setSelectedScopeId}
 			/>
 
 			<main className={styles.main}>

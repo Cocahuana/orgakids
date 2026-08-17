@@ -49,6 +49,14 @@ export interface Family {
 	inviteCode: string;
 }
 
+export type ScopeKind = "personal" | "family";
+
+export interface ScopeOption {
+	id: string;
+	name: string;
+	kind: ScopeKind;
+}
+
 export type TabId =
 	| "overview"
 	| "calendar"

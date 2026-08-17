@@ -3,6 +3,12 @@ import type { Entry, EntryType, ShoppingItem, Nota } from "../types";
 import { api, getToken } from "../lib/api";
 import { createSocket } from "../lib/socket";
 
+interface ScopeOptions {
+	kind: "personal" | "family";
+	familyId?: string;
+	userName?: string;
+}
+
 type WithId = { id: string };
 
 /** Idempotent merge so REST responses and socket broadcasts can't duplicate rows. */
@@ -14,7 +20,10 @@ function upsert<T extends WithId>(list: T[], item: T, prepend = false): T[] {
 	return next;
 }
 
-export function useEntries(enabled: boolean) {
+export function useEntries(
+	enabled: boolean,
+	scope: ScopeOptions = { kind: "family" },
+) {
 	const [state, setState] = useState<{
 		entries: Entry[];
 		shopping: ShoppingItem[];
@@ -42,15 +51,31 @@ export function useEntries(enabled: boolean) {
 		if (!enabled) return;
 
 		let cancelled = false;
+		const query =
+			scope.kind === "family" && scope.familyId
+				? `?familyId=${encodeURIComponent(scope.familyId)}`
+				: "";
 
 		Promise.all([
-			api.get<Entry[]>("/entries"),
-			api.get<ShoppingItem[]>("/shopping"),
-			api.get<Nota[]>("/notas"),
+			api.get<Entry[]>(`/entries${query}`),
+			api.get<ShoppingItem[]>(`/shopping${query}`),
+			api.get<Nota[]>(`/notas${query}`),
 		])
 			.then(([entries, shopping, notas]) => {
-				if (!cancelled)
-					setState({ entries, shopping, notas, loading: false });
+				if (!cancelled) {
+					const visibleEntries =
+						scope.kind === "personal" && scope.userName
+							? entries.filter(
+									(entry) => entry.kid === scope.userName,
+								)
+							: entries;
+					setState({
+						entries: visibleEntries,
+						shopping,
+						notas,
+						loading: false,
+					});
+				}
 			})
 			.catch((error) => {
 				console.error(error);
@@ -61,7 +86,7 @@ export function useEntries(enabled: boolean) {
 		return () => {
 			cancelled = true;
 		};
-	}, [enabled]);
+	}, [enabled, scope.familyId, scope.kind, scope.userName]);
 
 	// Live updates pushed from other devices in the same family
 	useEffect(() => {
@@ -98,29 +123,45 @@ export function useEntries(enabled: boolean) {
 
 	// ── Entries CRUD ───────────────────────────────────────────────────────────
 
+	const familyQuery =
+		scope.kind === "family" && scope.familyId
+			? `?familyId=${encodeURIComponent(scope.familyId)}`
+			: "";
+
+	const requestPath = (path: string) =>
+		familyQuery
+			? `${path}${path.includes("?") ? "&" : "?"}familyId=${encodeURIComponent(scope.familyId ?? "")}`
+			: path;
+
 	const addEntry = useCallback(
 		async (entry: Omit<Entry, "id">) => {
-			const created = await api.post<Entry>("/entries", entry);
+			const created = await api.post<Entry>(
+				requestPath("/entries"),
+				entry,
+			);
 			setEntries((prev) => upsert(prev, created));
 		},
-		[setEntries],
+		[requestPath, setEntries],
 	);
 
 	const updateEntry = useCallback(
 		async (updated: Entry) => {
 			const { id, ...payload } = updated;
-			const saved = await api.put<Entry>(`/entries/${id}`, payload);
+			const saved = await api.put<Entry>(
+				requestPath(`/entries/${id}`),
+				payload,
+			);
 			setEntries((prev) => upsert(prev, saved));
 		},
-		[setEntries],
+		[requestPath, setEntries],
 	);
 
 	const deleteEntry = useCallback(
 		async (id: string) => {
-			await api.delete(`/entries/${id}`);
+			await api.delete(requestPath(`/entries/${id}`));
 			setEntries((prev) => prev.filter((e) => e.id !== id));
 		},
-		[setEntries],
+		[requestPath, setEntries],
 	);
 
 	const getByType = useCallback(
@@ -132,51 +173,63 @@ export function useEntries(enabled: boolean) {
 
 	const addShoppingItem = useCallback(
 		async (name: string) => {
-			const created = await api.post<ShoppingItem>("/shopping", { name });
+			const created = await api.post<ShoppingItem>(
+				requestPath("/shopping"),
+				{ name },
+			);
 			setShopping((prev) => upsert(prev, created));
 		},
-		[setShopping],
+		[requestPath, setShopping],
 	);
 
 	const updateShoppingItem = useCallback(
 		async (id: string, name: string) => {
-			const saved = await api.put<ShoppingItem>(`/shopping/${id}`, {
-				name,
-			});
+			const saved = await api.put<ShoppingItem>(
+				requestPath(`/shopping/${id}`),
+				{
+					name,
+				},
+			);
 			setShopping((prev) => upsert(prev, saved));
 		},
-		[setShopping],
+		[requestPath, setShopping],
 	);
 
 	const deleteShoppingItem = useCallback(
 		async (id: string) => {
-			await api.delete(`/shopping/${id}`);
+			await api.delete(requestPath(`/shopping/${id}`));
 			setShopping((prev) => prev.filter((i) => i.id !== id));
 		},
-		[setShopping],
+		[requestPath, setShopping],
 	);
 
 	// ── Notas CRUD ─────────────────────────────────────────────────────────────
 
 	const addNota = useCallback(async () => {
-		const created = await api.post<Nota>("/notas", { title: "", body: "" });
+		const created = await api.post<Nota>(requestPath("/notas"), {
+			title: "",
+			body: "",
+		});
 		setNotas((prev) => upsert(prev, created, true));
-	}, [setNotas]);
+	}, [requestPath, setNotas]);
 
 	const updateNota = useCallback(
 		async (id: string, title: string, body: string) => {
-			const saved = await api.put<Nota>(`/notas/${id}`, { title, body });
+			const saved = await api.put<Nota>(requestPath(`/notas/${id}`), {
+				title,
+				body,
+			});
 			setNotas((prev) => upsert(prev, saved));
 		},
-		[setNotas],
+		[requestPath, setNotas],
 	);
 
 	const deleteNota = useCallback(
 		async (id: string) => {
-			await api.delete(`/notas/${id}`);
+			await api.delete(requestPath(`/notas/${id}`));
 			setNotas((prev) => prev.filter((n) => n.id !== id));
 		},
-		[setNotas],
+		[requestPath, setNotas],
 	);
 
 	return {
