@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-import type { User } from "firebase/auth";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useState } from "react";
 import type { Entry, EntryType, TabId } from "./types";
 import { useEntries } from "./hooks/useEntries";
+import { useAuth } from "./hooks/useAuth";
 import { useToast } from "./hooks/useToast";
 import { TYPE_INFO } from "./constants";
-import { getAuthInstance } from "./lib/firebase";
 import { AppHeader } from "./components/organisms/AppHeader";
 import { EntryModal } from "./components/organisms/EntryModal";
 import { ConfirmDialog } from "./components/organisms/ConfirmDialog";
@@ -20,6 +18,14 @@ import styles from "./App.module.css";
 
 export default function App() {
 	const {
+		user,
+		family,
+		loading: isAuthLoading,
+		login,
+		register,
+		logout,
+	} = useAuth();
+	const {
 		entries,
 		shopping,
 		notas,
@@ -32,7 +38,7 @@ export default function App() {
 		addNota,
 		updateNota,
 		deleteNota,
-	} = useEntries();
+	} = useEntries(user !== null);
 	const { message: toastMsg, visible: toastVisible, showToast } = useToast();
 	const [activeTab, setActiveTab] = useState<TabId>("overview");
 	const [modalOpen, setModalOpen] = useState(false);
@@ -43,17 +49,11 @@ export default function App() {
 		message: string;
 		onConfirm: () => void;
 	} | null>(null);
-	const [currentUser, setCurrentUser] = useState<User | null>(null);
-	const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(getAuthInstance(), (user) => {
-			setCurrentUser(user);
-			setIsAuthLoading(false);
-		});
-
-		return unsubscribe;
-	}, []);
+	function reportError(error: unknown, fallback: string) {
+		console.error(error);
+		showToast(error instanceof Error ? error.message : fallback);
+	}
 
 	function openAdd(date = "", type?: EntryType) {
 		setEditEntry(null);
@@ -69,14 +69,22 @@ export default function App() {
 		setModalOpen(true);
 	}
 
-	function handleSave(entry: Omit<Entry, "id">) {
-		addEntry(entry);
-		showToast("Entrada guardada ✓");
+	async function handleSave(entry: Omit<Entry, "id">) {
+		try {
+			await addEntry(entry);
+			showToast("Entrada guardada ✓");
+		} catch (error) {
+			reportError(error, "No se pudo guardar la entrada");
+		}
 	}
 
-	function handleUpdate(entry: Entry) {
-		updateEntry(entry);
-		showToast("Entrada actualizada ✓");
+	async function handleUpdate(entry: Entry) {
+		try {
+			await updateEntry(entry);
+			showToast("Entrada actualizada ✓");
+		} catch (error) {
+			reportError(error, "No se pudo actualizar la entrada");
+		}
 	}
 
 	function handleDelete(id: string) {
@@ -85,9 +93,12 @@ export default function App() {
 		setConfirmState({
 			message: `¿Eliminar${label}?`,
 			onConfirm: () => {
-				deleteEntry(id);
-				showToast("Entrada eliminada");
 				setConfirmState(null);
+				deleteEntry(id)
+					.then(() => showToast("Entrada eliminada"))
+					.catch((error) =>
+						reportError(error, "No se pudo eliminar la entrada"),
+					);
 			},
 		});
 	}
@@ -96,20 +107,22 @@ export default function App() {
 		setActiveTab(TYPE_INFO[type].view);
 	}
 
-	async function handleLogout() {
-		try {
-			await signOut(getAuthInstance());
-		} catch {
-			window.alert("No se pudo cerrar sesión, Intentá de nuevo.");
-		}
+	/** Wraps a fire-and-forget async action so failures surface as a toast. */
+	function guard<A extends unknown[]>(
+		action: (...args: A) => Promise<unknown>,
+		fallback: string,
+	) {
+		return (...args: A) => {
+			action(...args).catch((error) => reportError(error, fallback));
+		};
 	}
 
 	if (isAuthLoading) {
 		return null;
 	}
 
-	if (!currentUser) {
-		return <AuthView />;
+	if (!user) {
+		return <AuthView onLogin={login} onRegister={register} />;
 	}
 
 	return (
@@ -118,7 +131,8 @@ export default function App() {
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
 				onAdd={() => openAdd()}
-				onLogout={handleLogout}
+				onLogout={logout}
+				inviteCode={family?.inviteCode}
 			/>
 
 			<main className={styles.main}>
@@ -144,9 +158,18 @@ export default function App() {
 				{activeTab === "supermarket" && (
 					<SupermarketView
 						shopping={shopping}
-						onAdd={addShoppingItem}
-						onUpdate={updateShoppingItem}
-						onDelete={deleteShoppingItem}
+						onAdd={guard(
+							addShoppingItem,
+							"No se pudo agregar el producto",
+						)}
+						onUpdate={guard(
+							updateShoppingItem,
+							"No se pudo actualizar el producto",
+						)}
+						onDelete={guard(
+							deleteShoppingItem,
+							"No se pudo eliminar el producto",
+						)}
 						onShowToast={showToast}
 					/>
 				)}
@@ -207,9 +230,12 @@ export default function App() {
 				{activeTab === "notas" && (
 					<NotasView
 						notas={notas}
-						onAdd={addNota}
-						onSave={updateNota}
-						onDelete={deleteNota}
+						onAdd={guard(addNota, "No se pudo crear la nota")}
+						onSave={guard(updateNota, "No se pudo guardar la nota")}
+						onDelete={guard(
+							deleteNota,
+							"No se pudo eliminar la nota",
+						)}
 					/>
 				)}
 			</main>

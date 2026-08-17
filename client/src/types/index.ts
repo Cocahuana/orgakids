@@ -37,6 +37,18 @@ export interface ShoppingItem {
 	name: string;
 }
 
+export interface AuthUser {
+	id: string;
+	name: string;
+	email: string;
+}
+
+export interface Family {
+	id: string;
+	name: string;
+	inviteCode: string;
+}
+
 export type TabId =
 	| "overview"
 	| "calendar"

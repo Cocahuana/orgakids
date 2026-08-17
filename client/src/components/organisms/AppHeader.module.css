@@ -63,6 +63,22 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
+.inviteChip {
+  background: rgba(124, 159, 255, 0.18);
+  color: #cbd8ff;
+  border: 1px solid rgba(124, 159, 255, 0.45);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.inviteChip:hover { background: rgba(124, 159, 255, 0.3); }
+
 .tabs {
   display: flex;
   gap: 4px;

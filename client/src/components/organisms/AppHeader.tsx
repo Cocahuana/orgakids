@@ -19,6 +19,7 @@ interface AppHeaderProps {
 	onTabChange: (tab: TabId) => void;
 	onAdd: () => void;
 	onLogout: () => void;
+	inviteCode?: string;
 }
 
 export function AppHeader({
@@ -26,6 +27,7 @@ export function AppHeader({
 	onTabChange,
 	onAdd,
 	onLogout,
+	inviteCode,
 }: AppHeaderProps) {
 	return (
 		<header className={styles.header}>
@@ -34,6 +36,18 @@ export function AppHeader({
 					🏠 Org<span>Famy</span>
 				</div>
 				<div className={styles.actions}>
+					{inviteCode && (
+						<button
+							type='button'
+							className={styles.inviteChip}
+							title='Código para invitar a tu familia (click para copiar)'
+							onClick={() =>
+								void navigator.clipboard?.writeText(inviteCode)
+							}
+						>
+							👥 {inviteCode}
+						</button>
+					)}
 					<button
 						type='button'
 						className={styles.logoutBtn}
