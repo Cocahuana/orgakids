@@ -12,7 +12,8 @@ async function main() {
 	const httpServer = createServer(createApp());
 	initRealtime(httpServer);
 
-	httpServer.listen(env.port, () => {
+	// 0.0.0.0 es obligatorio para que el proxy de Railway alcance el contenedor.
+	httpServer.listen(env.port, "0.0.0.0", () => {
 		console.log(`🚀 API escuchando en el puerto ${env.port}`);
 	});
 
