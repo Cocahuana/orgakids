@@ -10,10 +10,30 @@ function required(name: string): string {
 	return value;
 }
 
+const nodeEnv = process.env.NODE_ENV ?? "development";
+export const isProduction = nodeEnv === "production";
+
+const localDbUser =
+	process.env.LOCAL_POSTGRES_USER ?? process.env.POSTGRES_USER ?? "postgres";
+const localDbPassword =
+	process.env.LOCAL_POSTGRES_PASSWORD ??
+	process.env.POSTGRES_PASSWORD ??
+	"postgres";
+const localDbHost =
+	process.env.LOCAL_POSTGRES_HOST ?? process.env.POSTGRES_HOST ?? "localhost";
+const localDbPort =
+	process.env.LOCAL_POSTGRES_PORT ?? process.env.POSTGRES_PORT ?? "5432";
+const localDbName =
+	process.env.LOCAL_POSTGRES_DB ?? process.env.POSTGRES_DB ?? "orgafamy";
+
+const localDatabaseUrl =
+	process.env.LOCAL_DATABASE_URL ??
+	`postgresql://${localDbUser}:${localDbPassword}@${localDbHost}:${localDbPort}/${localDbName}`;
+
 export const env = {
-	nodeEnv: process.env.NODE_ENV ?? "development",
+	nodeEnv,
 	port: Number(process.env.PORT ?? 4000),
-	databaseUrl: required("DATABASE_URL"),
+	databaseUrl: isProduction ? required("DATABASE_URL") : localDatabaseUrl,
 	jwtSecret: required("JWT_SECRET"),
 	jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
 	dbSyncAlter: process.env.DB_SYNC_ALTER === "true",
@@ -22,5 +42,3 @@ export const env = {
 		.map((origin) => origin.trim())
 		.filter(Boolean),
 };
-
-export const isProduction = env.nodeEnv === "production";

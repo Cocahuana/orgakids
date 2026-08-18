@@ -1,4 +1,4 @@
-import type { TabId } from "../../types";
+import type { ScopeOption, TabId } from "../../types";
 import styles from "./AppHeader.module.css";
 
 const TABS: { id: TabId; label: string }[] = [
@@ -20,6 +20,9 @@ interface AppHeaderProps {
 	onAdd: () => void;
 	onLogout: () => void;
 	inviteCode?: string;
+	scopes?: ScopeOption[];
+	selectedScopeId?: string;
+	onScopeChange?: (scopeId: string) => void;
 }
 
 export function AppHeader({
@@ -28,6 +31,9 @@ export function AppHeader({
 	onAdd,
 	onLogout,
 	inviteCode,
+	scopes = [],
+	selectedScopeId,
+	onScopeChange,
 }: AppHeaderProps) {
 	return (
 		<header className={styles.header}>
@@ -36,6 +42,31 @@ export function AppHeader({
 					🏠 Org<span>Famy</span>
 				</div>
 				<div className={styles.actions}>
+					{scopes.length > 0 && (
+						<label className={styles.scopeSelectWrap}>
+							<span className={styles.scopeLabel}>Vista</span>
+							<select
+								className={styles.scopeSelect}
+								value={
+									selectedScopeId ??
+									scopes[0]?.id ??
+									"personal"
+								}
+								onChange={(event) =>
+									onScopeChange?.(event.target.value)
+								}
+							>
+								{scopes.map((scope) => (
+									<option key={scope.id} value={scope.id}>
+										{scope.kind === "personal"
+											? "👤 "
+											: "👨‍👩‍👧‍👦 "}
+										{scope.name}
+									</option>
+								))}
+							</select>
+						</label>
+					)}
 					{inviteCode && (
 						<button
 							type='button'

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { Family, User } from "../models/index.js";
+import { Family, User, UserFamily } from "../models/index.js";
 import { signToken } from "../utils/jwt.js";
 import { generateInviteCode } from "../utils/inviteCode.js";
 import { HttpError } from "../utils/HttpError.js";
@@ -36,6 +36,32 @@ const publicFamily = (family: Family) => ({
 	inviteCode: family.inviteCode,
 });
 
+async function listUserFamilies(userId: string) {
+	const memberships = await UserFamily.findAll({
+		where: { userId },
+		attributes: ["familyId", "createdAt"],
+		order: [["createdAt", "ASC"]],
+	});
+
+	if (!memberships.length) return [];
+
+	const families = await Family.findAll({
+		where: { id: memberships.map((membership) => membership.familyId) },
+	});
+
+	const byId = new Map(families.map((family) => [family.id, family]));
+	return memberships
+		.map((membership) => byId.get(membership.familyId))
+		.filter((family): family is Family => Boolean(family));
+}
+
+async function ensureFamilyMembership(userId: string, familyId: string) {
+	const exists = await UserFamily.findOne({ where: { userId, familyId } });
+	if (!exists) {
+		await UserFamily.create({ userId, familyId, role: "member" });
+	}
+}
+
 authRouter.post("/register", async (req, res) => {
 	const { name, email, password, familyName, inviteCode } =
 		registerSchema.parse(req.body);
@@ -64,10 +90,19 @@ authRouter.post("/register", async (req, res) => {
 		passwordHash: await bcrypt.hash(password, 12),
 	});
 
+	await ensureFamilyMembership(user.id, family.id);
+	await UserFamily.update(
+		{ role: "owner" },
+		{ where: { userId: user.id, familyId: family.id } },
+	);
+
+	const userFamilies = await listUserFamilies(user.id);
+
 	res.status(201).json({
 		token: signToken({ userId: user.id, familyId: family.id }),
 		user: publicUser(user),
 		family: publicFamily(family),
+		families: userFamilies.map(publicFamily),
 	});
 });
 
@@ -90,10 +125,13 @@ authRouter.post("/login", async (req, res) => {
 	const family = await Family.findByPk(user.familyId);
 	if (!family) throw new HttpError(500, "La familia del usuario no existe");
 
+	const userFamilies = await listUserFamilies(user.id);
+
 	res.json({
 		token: signToken({ userId: user.id, familyId: family.id }),
 		user: publicUser(user),
 		family: publicFamily(family),
+		families: userFamilies.map(publicFamily),
 	});
 });
 
@@ -106,5 +144,12 @@ authRouter.get("/me", requireAuth, async (req, res) => {
 	const family = await Family.findByPk(user.familyId);
 	if (!family) throw new HttpError(500, "La familia del usuario no existe");
 
-	res.json({ user: publicUser(user), family: publicFamily(family) });
+	await ensureFamilyMembership(user.id, family.id);
+	const userFamilies = await listUserFamilies(user.id);
+
+	res.json({
+		user: publicUser(user),
+		family: publicFamily(family),
+		families: userFamilies.map(publicFamily),
+	});
 });
