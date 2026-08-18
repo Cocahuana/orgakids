@@ -37,8 +37,9 @@ export const env = {
 	jwtSecret: required("JWT_SECRET"),
 	jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "7d",
 	dbSyncAlter: process.env.DB_SYNC_ALTER === "true",
+	// El navegador envía el Origin sin barra final; la recortamos para que matchee.
 	clientOrigins: (process.env.CLIENT_ORIGIN ?? "http://localhost:5173")
 		.split(",")
-		.map((origin) => origin.trim())
+		.map((origin) => origin.trim().replace(/\/+$/, ""))
 		.filter(Boolean),
 };
