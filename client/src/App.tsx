@@ -200,7 +200,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
-						onAdd={openAdd}
+						onAdd={(type) => openAdd("", type)}
 					/>
 				)}
 				{activeTab === "sports" && (
@@ -209,7 +209,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
-						onAdd={openAdd}
+						onAdd={(type) => openAdd("", type)}
 					/>
 				)}
 				{activeTab === "events" && (
@@ -218,7 +218,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
-						onAdd={openAdd}
+						onAdd={(type) => openAdd("", type)}
 					/>
 				)}
 				{activeTab === "medical" && (
@@ -227,7 +227,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
-						onAdd={openAdd}
+						onAdd={(type) => openAdd("", type)}
 					/>
 				)}
 				{activeTab === "recover" && (
@@ -236,7 +236,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
-						onAdd={openAdd}
+						onAdd={(type) => openAdd("", type)}
 					/>
 				)}
 				{activeTab === "works" && (
@@ -245,7 +245,7 @@ export default function App() {
 						entries={entries}
 						onEdit={openEdit}
 						onDelete={handleDelete}
-						onAdd={openAdd}
+						onAdd={(type) => openAdd("", type)}
 					/>
 				)}
 				{activeTab === "notas" && (
