@@ -115,6 +115,21 @@
 }
 .inviteChip:hover { background: rgba(124, 159, 255, 0.3); }
 
+.joinBtn {
+  background: transparent;
+  color: #cbd8ff;
+  border: 1px solid rgba(124, 159, 255, 0.45);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.joinBtn:hover { background: rgba(124, 159, 255, 0.14); }
+
 .tabs {
   display: flex;
   gap: 4px;
@@ -142,9 +157,36 @@
   border-bottom-color: #7C9FFF;
 }
 
-@media (max-width: 520px) {
-  .header { padding-left: 14px; padding-right: 14px; }
-  .actions { gap: 6px; }
-  .logoutBtn { padding: 9px 10px; font-size: 12px; }
-  .addBtn { padding: 9px 12px; }
+@media (max-width: 640px) {
+  .header { padding: 14px 12px 0; }
+
+  .top { flex-wrap: wrap; row-gap: 10px; margin-bottom: 12px; }
+
+  .logo { font-size: 18px; flex: 1 1 auto; }
+
+  .actions {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .scopeSelectWrap {
+    flex: 1 1 100%;
+    justify-content: center;
+    order: -1;
+  }
+  .scopeSelect { flex: 1; min-width: 0; }
+
+  .inviteChip,
+  .joinBtn,
+  .logoutBtn,
+  .addBtn {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .tabs { gap: 2px; }
+  .tab { padding: 8px 10px; font-size: 12px; }
 }

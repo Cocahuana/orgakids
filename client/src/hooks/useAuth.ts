@@ -23,11 +23,14 @@ export interface RegisterPayload {
 	inviteCode?: string;
 }
 
+/** Persists the last family scope visited so reloads land there instead of "personal". */
+const LAST_FAMILY_SCOPE_KEY = "orgafamy_last_family_scope";
+
 export function useAuth() {
 	const [user, setUser] = useState<AuthUser | null>(null);
 	const [family, setFamily] = useState<Family | null>(null);
 	const [scopes, setScopes] = useState<ScopeOption[]>([]);
-	const [selectedScopeId, setSelectedScopeId] = useState<string>("personal");
+	const [selectedScopeId, setSelectedScopeId] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 
 	const syncScopes = useCallback(
@@ -48,11 +51,30 @@ export function useAuth() {
 				) {
 					return current;
 				}
-				return nextScopes[0]?.id ?? "personal";
+				const familyScopes = nextScopes.filter(
+					(scope) => scope.kind === "family",
+				);
+				const lastFamilyScopeId = localStorage.getItem(
+					LAST_FAMILY_SCOPE_KEY,
+				);
+				if (
+					lastFamilyScopeId &&
+					familyScopes.some((scope) => scope.id === lastFamilyScopeId)
+				) {
+					return lastFamilyScopeId;
+				}
+				return familyScopes[0]?.id ?? nextScopes[0]?.id ?? "personal";
 			});
 		},
 		[],
 	);
+
+	const selectScope = useCallback((scopeId: string) => {
+		setSelectedScopeId(scopeId);
+		if (scopeId !== "personal") {
+			localStorage.setItem(LAST_FAMILY_SCOPE_KEY, scopeId);
+		}
+	}, []);
 
 	useEffect(() => {
 		if (!getToken()) {
@@ -86,7 +108,7 @@ export function useAuth() {
 			setUser(null);
 			setFamily(null);
 			setScopes([]);
-			setSelectedScopeId("personal");
+			setSelectedScopeId("");
 		};
 		window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
 		return () =>
@@ -124,12 +146,36 @@ export function useAuth() {
 		[applySession],
 	);
 
+	const joinFamily = useCallback(
+		async (inviteCode: string) => {
+			const result = await api.post<{
+				family: Family;
+				families: Family[];
+			}>("/auth/join-family", { inviteCode });
+			const nextScopes: ScopeOption[] = [
+				{
+					id: "personal",
+					name: user?.name ?? "",
+					kind: "personal",
+				},
+				...result.families.map((item) => ({
+					id: item.id,
+					name: item.name,
+					kind: "family" as const,
+				})),
+			];
+			setScopes(nextScopes);
+			selectScope(result.family.id);
+		},
+		[user, selectScope],
+	);
+
 	const logout = useCallback(() => {
 		clearToken();
 		setUser(null);
 		setFamily(null);
 		setScopes([]);
-		setSelectedScopeId("personal");
+		setSelectedScopeId("");
 	}, []);
 
 	const selectedScope =
@@ -144,10 +190,11 @@ export function useAuth() {
 		family,
 		scopes,
 		selectedScope,
-		setSelectedScopeId,
+		setSelectedScopeId: selectScope,
 		loading,
 		login,
 		register,
 		logout,
+		joinFamily,
 	};
 }

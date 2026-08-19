@@ -24,6 +24,15 @@ const loginSchema = z.object({
 	password: z.string().min(1, "Ingresá tu contraseña"),
 });
 
+const joinFamilySchema = z.object({
+	inviteCode: z
+		.string()
+		.trim()
+		.toUpperCase()
+		.min(1, "Ingresá el código de invitación")
+		.max(12),
+});
+
 const publicUser = (user: User) => ({
 	id: user.id,
 	name: user.name,
@@ -149,6 +158,28 @@ authRouter.get("/me", requireAuth, async (req, res) => {
 
 	res.json({
 		user: publicUser(user),
+		family: publicFamily(family),
+		families: userFamilies.map(publicFamily),
+	});
+});
+
+authRouter.post("/join-family", requireAuth, async (req, res) => {
+	const { userId } = getAuth(req);
+	const { inviteCode } = joinFamilySchema.parse(req.body);
+
+	const family = await Family.findOne({ where: { inviteCode } });
+	if (!family) throw new HttpError(404, "El código de invitación no existe");
+
+	const alreadyMember = await UserFamily.findOne({
+		where: { userId, familyId: family.id },
+	});
+	if (alreadyMember)
+		throw new HttpError(409, "Ya formás parte de esta familia");
+
+	await ensureFamilyMembership(userId, family.id);
+	const userFamilies = await listUserFamilies(userId);
+
+	res.status(201).json({
 		family: publicFamily(family),
 		families: userFamilies.map(publicFamily),
 	});

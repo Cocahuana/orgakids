@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { ScopeOption, TabId } from "../../types";
+import { JoinFamilyDialog } from "./JoinFamilyDialog";
 import styles from "./AppHeader.module.css";
 
 const TABS: { id: TabId; label: string }[] = [
@@ -23,6 +25,7 @@ interface AppHeaderProps {
 	scopes?: ScopeOption[];
 	selectedScopeId?: string;
 	onScopeChange?: (scopeId: string) => void;
+	onJoinFamily: (inviteCode: string) => Promise<void>;
 }
 
 export function AppHeader({
@@ -34,7 +37,10 @@ export function AppHeader({
 	scopes = [],
 	selectedScopeId,
 	onScopeChange,
+	onJoinFamily,
 }: AppHeaderProps) {
+	const [joinDialogOpen, setJoinDialogOpen] = useState(false);
+
 	return (
 		<header className={styles.header}>
 			<div className={styles.top}>
@@ -81,6 +87,13 @@ export function AppHeader({
 					)}
 					<button
 						type='button'
+						className={styles.joinBtn}
+						onClick={() => setJoinDialogOpen(true)}
+					>
+						🔗 Unirse
+					</button>
+					<button
+						type='button'
 						className={styles.logoutBtn}
 						onClick={onLogout}
 					>
@@ -107,6 +120,12 @@ export function AppHeader({
 					</button>
 				))}
 			</div>
+
+			<JoinFamilyDialog
+				open={joinDialogOpen}
+				onJoin={onJoinFamily}
+				onClose={() => setJoinDialogOpen(false)}
+			/>
 		</header>
 	);
 }

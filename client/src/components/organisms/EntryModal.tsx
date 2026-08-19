@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import type { Entry, EntryType } from "../../types";
+import type { Entry, EntryType, TabId } from "../../types";
 import { TITLE_LABELS } from "../../constants";
 import styles from "./EntryModal.module.css";
+
+/** Extra options in the type selector that jump to a view instead of creating an Entry. */
+type ShortcutType = "notas" | "supermarket";
 
 interface EntryModalProps {
 	open: boolean;
@@ -11,6 +14,7 @@ interface EntryModalProps {
 	onSave: (entry: Omit<Entry, "id">) => void;
 	onUpdate: (entry: Entry) => void;
 	onClose: () => void;
+	onNavigate: (tab: TabId) => void;
 }
 
 const DAY_LABELS = [
@@ -48,6 +52,7 @@ export function EntryModal({
 	onSave,
 	onUpdate,
 	onClose,
+	onNavigate,
 }: EntryModalProps) {
 	const [form, setForm] = useState({ ...EMPTY_FORM });
 
@@ -178,9 +183,16 @@ export function EntryModal({
 						id='fType'
 						value={form.type}
 						onChange={(e) => {
-							const t = e.target.value as EntryType;
-							set("type", t);
-							if (t !== "sport") set("repeatEnabled", false);
+							const value = e.target.value as
+								| EntryType
+								| ShortcutType;
+							if (value === "notas" || value === "supermarket") {
+								onNavigate(value);
+								onClose();
+								return;
+							}
+							set("type", value);
+							if (value !== "sport") set("repeatEnabled", false);
 						}}
 					>
 						<option value='exam'>📝 Examen</option>
@@ -189,6 +201,8 @@ export function EntryModal({
 						<option value='medical'>🚑 Turno Médico</option>
 						<option value='recover'>⚠️ Materia a recuperar</option>
 						<option value='work'>📋 Entrega de trabajo</option>
+						<option value='notas'>📓 Nota Libre</option>
+						<option value='supermarket'>🛒 Supermercado</option>
 					</select>
 				</div>
 

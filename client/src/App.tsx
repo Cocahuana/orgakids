@@ -27,6 +27,7 @@ export default function App() {
 		login,
 		register,
 		logout,
+		joinFamily,
 	} = useAuth();
 	const activeFamilyId =
 		selectedScope?.kind === "family"
@@ -118,6 +119,11 @@ export default function App() {
 		setActiveTab(TYPE_INFO[type].view);
 	}
 
+	async function handleJoinFamily(inviteCode: string) {
+		await joinFamily(inviteCode);
+		showToast("Te uniste a la familia ✓");
+	}
+
 	/** Wraps a fire-and-forget async action so failures surface as a toast. */
 	function guard<A extends unknown[]>(
 		action: (...args: A) => Promise<unknown>,
@@ -147,6 +153,7 @@ export default function App() {
 				scopes={scopes}
 				selectedScopeId={selectedScope?.id ?? "personal"}
 				onScopeChange={setSelectedScopeId}
+				onJoinFamily={handleJoinFamily}
 			/>
 
 			<main className={styles.main}>
@@ -263,6 +270,10 @@ export default function App() {
 					onSave={handleSave}
 					onUpdate={handleUpdate}
 					onClose={() => setModalOpen(false)}
+					onNavigate={(tab) => {
+						setModalOpen(false);
+						setActiveTab(tab);
+					}}
 				/>
 			)}
 			<ConfirmDialog
