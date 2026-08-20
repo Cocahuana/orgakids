@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Nota } from "../../types";
 import styles from "./NotasView.module.css";
 import parentStyles from "./SectionTitle.module.css";
@@ -61,6 +61,14 @@ function NotaCard({
 	const [title, setTitle] = useState(nota.title);
 	const [body, setBody] = useState(nota.body);
 	const [dirty, setDirty] = useState(false);
+
+	// Pick up remote edits (e.g. socket updates from another device) as long as
+	// this card has no unsaved local changes, so they aren't silently dropped.
+	useEffect(() => {
+		if (dirty) return;
+		setTitle(nota.title);
+		setBody(nota.body);
+	}, [nota.title, nota.body, dirty]);
 
 	function handleSave() {
 		onSave(nota.id, title, body);
